@@ -5,6 +5,9 @@ var app = express();
 
 var port = 3000;
 
+//set up template engines 
+app.set('view engine', 'ejs');
+
 //fire controllers
 weatherController(app);
 
