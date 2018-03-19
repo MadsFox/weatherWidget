@@ -4,25 +4,56 @@
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <title>Weather widget</title>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 </head>
 <body>
   <div class="widget" style="margin: 10px; width: 300px;">
     <div class="panel panel-info">
-      <div class="panel-heading">Weather in <b><%= data.city %></b></div>
+      <div class="panel-heading">Weather in <b id="cityHeadline"><%= data.city %></b></div>
       <ul class="list-group">
-        <li class="list-group-item">Temperature: <b><%= data.temp %>°C</b></li>
-        <li class="list-group-item">Humidity: <b><%= data.humidity %></b></li>
-        <li class="list-group-item">Wind: <b><%= data.wind %> m/s <%= data.heading %></b></li>
+        <li class="list-group-item">Temperature: <b id="temp"><%= data.temp %>°C</b></li>
+        <li class="list-group-item">Humidity: <b id="humidity"><%= data.humidity %></b></li>
+        <li class="list-group-item">Wind: <b id="wind"><%= data.wind %></b></li>
         <li class="list-group-item">
-            <form class="form-inline" method="get" id="cityForm">
+          <form class="form-inline" id="cityForm" method="GET" hidden>
+            <div class="form-group <%= data.status %>" id="formGroup">
+              <input type="text" class="form-control" name="city" id="city" placeholder="City">
+            </div>
+            <button value="Submit" form="cityForm" class="btn btn-default">Search</button>
+          </form>
+          <noscript>  
+            <form class="form-inline" method="GET" id="cityForm">
               <div class="form-group <%= data.status %>">
                 <input type="text" class="form-control" name="city" id="city" placeholder="City">
               </div>
               <button type="submit" value="Submit" form="cityForm" class="btn btn-default">Search</button>
             </form>
+          </noscript>
         </li>
       </ul>
     </div>
   </div>
 </body>
+<script>
+    document.getElementById("cityForm").removeAttribute("hidden");
+    $("#cityForm").on("submit", function(e){
+      e.preventDefault();
+      var reqCity = $("#city").val()
+      var reqURL = "http://localhost:3000/json?city="+reqCity;
+      $("#city").val("");
+      $.getJSON(reqURL,
+        function(data,status,xhr){
+          window.history.pushState("","Weather widget","http://localhost:3000/?city="+data.city);
+          $("#cityHeadline").text(data.city);
+          $("#temp").text(data.temp);
+          $("#humidity").text(data.humidity);
+          $("#wind").text(data.wind);
+          if(data.status == "has-error" && !($("#formGroup").hasClass("has-error"))){
+            $("#formGroup").addClass(data.status);  
+          }else if(data.status != "has-error" || $("#formGroup").hasClass("has-error")){
+            $("#formGroup").removeClass(data.status);
+          }
+        });
+      });
+  </script>  
 </html>

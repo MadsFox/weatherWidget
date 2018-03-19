@@ -7,7 +7,6 @@ module.exports = function(app){
     temp: "",
     humidity: "",
     wind: "",
-    heading: "",
     status: ""
   }
 
@@ -34,35 +33,51 @@ module.exports = function(app){
         data.city = JSONbody.name;
         data.temp = JSONbody.main.temp;
         data.humidity = JSONbody.main.humidity;
-        data.wind = JSONbody.wind.speed;
-        data.heading = degreesToDanishCompassheadings(JSONbody.wind.deg);        
-        data.status = "is-valid";
+        data.wind = JSONbody.wind.speed + " m/s " + degreesToDanishCompassHeadings(JSONbody.wind.deg);
+        data.status = "";
       }else{
-        data.status = "is-invalid";
+        data.status = "has-error";
       }
       res.render('weather', {data: data});
     });
-
-    
   });
+
+app.get("/json", function(req, res){
+  apiRequest.qs.q = req.query.city;
+  request.get(apiRequest, function(error, response, body){
+    if(!error && response.statusCode == 200){
+      var JSONbody = JSON.parse(body);
+      data.city = JSONbody.name;
+      data.temp = JSONbody.main.temp;
+      data.humidity = JSONbody.main.humidity;
+      data.wind = JSONbody.wind.speed + " m/s " + degreesToDanishCompassHeadings(JSONbody.wind.deg);
+      data.status = "";
+    }else{
+      data.status = "has-error";
+    }
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify(data));
+});
+});
 }
 
-var degreesToDanishCompassheadings = function(degrees){
-  if(degrees >= 337,5 || degrees < 22,5){
+
+var degreesToDanishCompassHeadings = function(degrees){
+  if(degrees >= 337.5 || degrees < 22.5){
     return "Nord";
-  }else if(degrees >= 22,5 && degrees < 45+22,5){
+  }else if(degrees >= 22.5 && degrees < 45+22.5){
     return "Nordøst";
-  }else if(degrees >= 45+22,5 && degrees < 2*45+22,5){
+  }else if(degrees >= 45+22.5 && degrees < 2*45+22.5){
     return "Øst";
-  }else if(degrees >= 2*45+22,5 && degrees < 3*45+22,5){
+  }else if(degrees >= 2*45+22.5 && degrees < 3*45+22.5){
     return "Sydøst";
-  }else if(degrees >= 3*45+22,5 && degrees < 4*45+22,5){
+  }else if(degrees >= 3*45+22.5 && degrees < 4*45+22.5){
     return "Syd";
-  }else if(degrees >= 4*45+22,5 && degrees < 5*45+22,5){
+  }else if(degrees >= 4*45+22.5 && degrees < 5*45+22.5){
     return "Sydvest";
-  }else if(degrees >= 5*45+22,5 && degrees < 6*45+22,5){
+  }else if(degrees >= 5*45+22.5 && degrees < 6*45+22.5){
     return "Vest";
-  }else if(degrees >= 6*45+22,5 && degrees < 7*45+22,5){
+  }else if(degrees >= 6*45+22.5 && degrees < 7*45+22.5){
     return "NordVest";
   }
 };
