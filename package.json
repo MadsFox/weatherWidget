@@ -1,0 +1,23 @@
+{
+  "name": "weatherwidget",
+  "version": "1.0.0",
+  "description": "Weather widget to show city weather",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gist.github.com/5987df44e348961d74e7cd5a27d9072b.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gist.github.com/5987df44e348961d74e7cd5a27d9072b"
+  },
+  "homepage": "https://gist.github.com/5987df44e348961d74e7cd5a27d9072b",
+  "dependencies": {
+    "ejs": "^2.5.7",
+    "express": "^4.16.3"
+  }
+}
